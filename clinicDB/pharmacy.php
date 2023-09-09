@@ -226,14 +226,46 @@
                                     //die("SQL error: " . mysqli_error($con));
                                 }
 
+                                // Calculate Gross Income for the Current Day
+                                $currentDate = date('Y-m-d'); // Get the current date in Y-m-d format
+
+                                $dayIncomeQuery = "SELECT SUM(CASE WHEN DATE(timestamp) = '$currentDate' AND payment_status = 'Paid' THEN total_price ELSE 0 END) AS day_income FROM patient";
+                                $dayIncomeResult = mysqli_query($con, $dayIncomeQuery);
+
+                                if ($dayIncomeResult) {
+                                    $dayIncomeData = mysqli_fetch_assoc($dayIncomeResult);
+                                    $dayIncome = $dayIncomeData['day_income'];
+                                } else {
+                                    $dayIncome = 0; // Default value in case of an error
+                                }
+
+                                // Calculate Gross Income for the Current Month
+                                $currentMonth = date('Y-m'); // Get the current month in Y-m format
+
+                                $monthIncomeQuery = "SELECT SUM(CASE WHEN DATE_FORMAT(timestamp, '%Y-%m') = '$currentMonth' AND payment_status = 'Paid' THEN total_price ELSE 0 END) AS month_income FROM patient";
+                                $monthIncomeResult = mysqli_query($con, $monthIncomeQuery);
+
+                                if ($monthIncomeResult) {
+                                    $monthIncomeData = mysqli_fetch_assoc($monthIncomeResult);
+                                    $monthIncome = $monthIncomeData['month_income'];
+                                } else {
+                                    $monthIncome = 0; // Default value in case of an error
+                                }
+
                             ?>
                         </tbody>
                     </table>
 
                     <!-- Display the total -->
-                    <div class="mt-4">
-                        <p id="totalPriceSum">Gross Income: RM <?= number_format($totalPriceSum, 2) ?></p>
-                    </div>
+                    <button type="button" id="totalPriceSum" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Gross Income">
+                        Gross Income: RM <?= number_format($totalPriceSum, 2) ?>
+                    </button>
+                    <button type="button" class="btn btn-warning" data-toggle="tooltip" data-placement="top" title="Gross Income for Current Day">
+                        Gross Income (Today): RM <?= number_format($dayIncome, 2) ?>
+                    </button>
+                    <button type="button" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Gross Income for Current Month">
+                        Gross Income (This Month): RM <?= number_format($monthIncome, 2) ?>
+                    </button>
 
                     <!-- Pagination -->
                     <div class="row">
