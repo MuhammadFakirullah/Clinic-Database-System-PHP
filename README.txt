@@ -9,6 +9,5 @@ C:\xampp\htdocs
 
 4. run the index.php file into web browser to see the system flow, you can type it by inserting this url http://localhost/clinicDB/index.php according to your listening port or host. in my case my host is 80.
 
-Attention, this is just a backup file, in case your xampp is crash, at least you already prepared 
 
 
